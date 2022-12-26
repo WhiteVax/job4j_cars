@@ -30,6 +30,14 @@ public class Post {
     @JoinColumn(name = "post_id")
     private List<PriceHistory> priceHistories;
 
+    @ManyToMany
+    @JoinTable(
+            name = "participants",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private List<Post> participants;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
