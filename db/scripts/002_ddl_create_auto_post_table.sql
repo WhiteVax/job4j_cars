@@ -1,10 +1,3 @@
-create TABLE IF NOT EXISTS auto_user
- (
-    id          SERIAL PRIMARY KEY,
-    login       VARCHAR,
-    password    VARCHAR
-);
-
 CREATE TABLE IF NOT EXISTS auto_post
 (
     id SERIAL PRIMARY KEY,
