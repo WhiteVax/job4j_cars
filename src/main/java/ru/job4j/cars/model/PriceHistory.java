@@ -21,7 +21,7 @@ public class PriceHistory {
     private int id;
     private int before;
     private int after;
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Override
     public boolean equals(Object o) {
