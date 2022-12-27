@@ -37,7 +37,7 @@ public class Post {
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private List<Post> participants;
+    private List<Post> participants = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
