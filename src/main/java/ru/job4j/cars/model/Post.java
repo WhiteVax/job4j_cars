@@ -21,6 +21,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String ext;
+    private byte[] photo;
     private LocalDateTime created = LocalDateTime.now();
 
     @ManyToOne
@@ -30,6 +31,10 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private List<PriceHistory> priceHistories = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
 
     @ManyToMany
     @JoinTable(
