@@ -42,8 +42,8 @@ public class PostRepository {
         return crudRepository.query("FROM Post WHERE photo IS NOT NULL", Post.class);
     }
 
-    public List<Post> getPostsWithCarBrand(String like) {
-        return crudRepository.query("FROM Post JOIN FETCH Car AS c WHERE c.name LIKE %:fBrand% ", Post.class,
-                Map.of("fBrand", like));
+    public List<Post> getPostsWithCarBrand(String brand) {
+        return crudRepository.query("FROM Post JOIN FETCH Car AS c WHERE c.name = :fBrand ", Post.class,
+                Map.of("fBrand", brand));
     }
 }

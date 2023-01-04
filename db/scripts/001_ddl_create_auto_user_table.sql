@@ -4,3 +4,5 @@ CREATE TABLE IF NOT EXISTS auto_user
     login       VARCHAR,
     password    VARCHAR
 );
+
+COMMENT ON TABLE auto_user IS 'Пользователи'
