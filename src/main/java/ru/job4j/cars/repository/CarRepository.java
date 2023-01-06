@@ -18,7 +18,7 @@ public class CarRepository {
         return crudRepository.query("From Car ORDER BY id", Car.class);
     }
 
-    public Car createTask(Car car) {
+    public Car createCar(Car car) {
         crudRepository.run(session ->
                 session.persist("task", car));
         return car;

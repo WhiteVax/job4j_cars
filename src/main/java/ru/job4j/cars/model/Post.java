@@ -1,9 +1,6 @@
 package ru.job4j.cars.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,11 +13,12 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter @Setter
 @Table(name = "auto_post")
+@Builder
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String ext;
+    private String text;
     private byte[] photo;
     private LocalDateTime created = LocalDateTime.now();
 

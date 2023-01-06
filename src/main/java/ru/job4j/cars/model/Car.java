@@ -1,15 +1,16 @@
 package ru.job4j.cars.model;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "car_table")
+@Table(name = "car")
 @AllArgsConstructor
+@Getter @Setter
 @NoArgsConstructor
+@Builder
 public class Car {
 
     @Id

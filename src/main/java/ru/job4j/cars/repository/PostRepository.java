@@ -15,7 +15,7 @@ public class PostRepository {
     private final CrudRepository crudRepository;
 
     public Post createPost(Post post) {
-        crudRepository.run(session -> session.persist(post));
+        crudRepository.run(session -> session.save(post));
         return post;
     }
 
@@ -28,7 +28,7 @@ public class PostRepository {
     }
 
     public void update(Post post) {
-        crudRepository.run(session -> session.merge(post));
+        crudRepository.run(session -> session.saveOrUpdate(post));
     }
 
     public List<Post> getPostsByDay() {
@@ -43,7 +43,7 @@ public class PostRepository {
     }
 
     public List<Post> getPostsWithCarBrand(String brand) {
-        return crudRepository.query("FROM Post JOIN FETCH Car AS c WHERE c.name = :fBrand ", Post.class,
+        return crudRepository.query("SELECT p FROM Post p JOIN FETCH p.car c WHERE c.name = :fBrand ", Post.class,
                 Map.of("fBrand", brand));
     }
 }
