@@ -15,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 class PostRepositoryTest {
     private final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
             .configure()
