@@ -1,0 +1,3 @@
+ALTER TABLE driver DROP COLUMN user_id;
+
+ALTER TABLE driver ADD COLUMN surname VARCHAR;
