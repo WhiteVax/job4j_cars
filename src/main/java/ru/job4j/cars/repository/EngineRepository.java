@@ -23,8 +23,7 @@ public class EngineRepository {
         return engine;
     }
 
-    public Optional<Engine> getByIdDriver(int id) {
+    public Optional<Engine> getByIdEngine(int id) {
         return crudRepository.optional("FROM Engine WHERE id = :fId", Engine.class, Map.of("fId", id));
     }
-
 }

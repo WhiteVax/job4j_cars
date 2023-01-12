@@ -1,12 +1,16 @@
 package ru.job4j.cars.repository;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 import ru.job4j.cars.model.User;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
+@Repository
 @AllArgsConstructor
 public class UserRepository {
     private final CrudRepository crudRepository;
@@ -16,9 +20,14 @@ public class UserRepository {
      * @param user пользователь.
      * @return пользователь с id.
      */
-    public User create(User user) {
-        crudRepository.run(session -> session.persist(user));
-        return user;
+    public Optional<User> create(User user) {
+        try {
+            crudRepository.run(session -> session.saveOrUpdate(user));
+            return Optional.of(user);
+        } catch (Exception e) {
+               log.error("Error int createUser.", e);
+               return Optional.empty();
+        }
     }
 
     /**
@@ -81,6 +90,24 @@ public class UserRepository {
                 "FROM User WHERE login = :fLogin", User.class,
                 Map.of("fLogin", login)
         );
+    }
+
+
+    /**
+     * Найти пользователя по login и password.
+     * @param login login.
+     * @return Optional or user.
+     */
+    public Optional<User> findByLoginAndPassword(String login, String password) {
+        try {
+            return crudRepository.optional(
+                    "FROM User WHERE login = :fLogin AND password = :fPass", User.class,
+                    Map.of("fLogin", login, "fPass", password)
+            );
+        } catch (Exception e) {
+            log.error("Error in findByLoginAndPassword.", e);
+            return Optional.empty();
+        }
     }
 }
 

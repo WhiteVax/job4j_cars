@@ -20,8 +20,13 @@ public class DriverRepository {
 
     public Driver createDriver(Driver driver) {
         crudRepository.run(session ->
-                session.persist("driver", driver));
+                session.save(driver));
         return driver;
+    }
+
+    public void update(Driver driver) {
+        crudRepository.run(session ->
+                session.merge(driver));
     }
 
     public Optional<Driver> getByIdDriver(int id) {

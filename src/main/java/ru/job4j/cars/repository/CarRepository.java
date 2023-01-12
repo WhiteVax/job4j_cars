@@ -20,11 +20,15 @@ public class CarRepository {
 
     public Car createCar(Car car) {
         crudRepository.run(session ->
-                session.persist("task", car));
+                session.save(car));
         return car;
     }
 
     public Optional<Car> getByIdCar(int id) {
         return crudRepository.optional("FROM Car WHERE id = :fId", Car.class, Map.of("fId", id));
+    }
+
+    public void update(Car car) {
+        crudRepository.run(session -> session.merge(car));
     }
 }

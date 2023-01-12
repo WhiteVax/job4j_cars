@@ -19,6 +19,10 @@ public class PostRepository {
         return post;
     }
 
+    public void deletePost(Post post) {
+        crudRepository.run(session -> session.delete(post));
+    }
+
     public List<Post> getAllPostOrderById() {
         return crudRepository.query("FROM Post Order BY id", Post.class);
     }
@@ -29,6 +33,12 @@ public class PostRepository {
 
     public void update(Post post) {
         crudRepository.run(session -> session.saveOrUpdate(post));
+    }
+
+    public void soldCar(int id) {
+        crudRepository.run(
+                "UPDATE Post p SET p.status = true Where p.id = :fId",
+                Map.of("fId", id));
     }
 
     public List<Post> getPostsByDay() {
@@ -43,7 +53,7 @@ public class PostRepository {
     }
 
     public List<Post> getPostsWithCarBrand(String brand) {
-        return crudRepository.query("SELECT p FROM Post p JOIN FETCH p.car c WHERE c.name = :fBrand ", Post.class,
+        return crudRepository.query("FROM Post p JOIN FETCH p.car с WHERE с.name = :fBrand ", Post.class,
                 Map.of("fBrand", brand));
     }
 }
