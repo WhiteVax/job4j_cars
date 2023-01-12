@@ -1,11 +1,10 @@
 package ru.job4j.cars.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,16 +12,17 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
+@Builder
 public class Driver {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    private String surname;
 
-    @ManyToOne
-    @JoinColumn(name = "auto_user", referencedColumnName = "id")
-    private User user;
+    @OneToMany(mappedBy = "driver")
+    private List<Car> cars = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

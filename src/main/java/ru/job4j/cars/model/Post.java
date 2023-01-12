@@ -21,6 +21,9 @@ public class Post {
     private String text;
     private byte[] photo;
     private LocalDateTime created = LocalDateTime.now();
+    private boolean status;
+    private int year;
+    private int price;
 
     @ManyToOne
     @JoinColumn(name = "auto_user_id")
@@ -30,7 +33,7 @@ public class Post {
     @JoinColumn(name = "post_id")
     private List<PriceHistory> priceHistories = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "car_id")
     private Car car;
 
