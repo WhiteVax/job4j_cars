@@ -18,7 +18,7 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <title>To Do</title>
+    <title>Cars</title>
 </head>
 <body>
 <div class="container">
@@ -104,7 +104,7 @@
 
                     <td>
                         <img th:width="150" th:high="150"
-                             th:src="@{|/posterPost/${post.id}|}">
+                             th:src="@{|/photoCar/${post.id}|}">
                     </td>
                     <td th:text="${#temporals.format (post.created, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <td>

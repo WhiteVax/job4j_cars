@@ -1,13 +1,13 @@
 package ru.job4j.cars.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.cars.model.*;
 import ru.job4j.cars.service.CarService;
-import ru.job4j.cars.service.DriverService;
 import ru.job4j.cars.service.EngineService;
 import ru.job4j.cars.service.PostService;
 
@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static ru.job4j.cars.util.UserSession.getUser;
 
@@ -150,7 +151,8 @@ public class PostController {
     @GetMapping("/photos")
     public String getPostsWithPhoto(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        model.addAttribute("posts", postService.getAllWithPhoto());
+        model.addAttribute("posts", postService.getAllWithPhoto().stream()
+                .filter(p -> p.getPhoto().length > 0).toList());
         return "post/all";
     }
 
@@ -160,5 +162,16 @@ public class PostController {
         model.addAttribute("user", getUser(session));
         model.addAttribute("posts", postService.getAllWithByBrand(brand));
         return "post/all";
+    }
+
+    @GetMapping("/photoCar/{id}")
+    public ResponseEntity<?> getCarPhotoByPostId(@PathVariable int id) {
+        Optional<Post> postOptional = postService.getById(id);
+        if (postOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var post = postOptional.get();
+        byte[] image = post.getPhoto();
+        return ResponseEntity.ok(image);
     }
 }
