@@ -7,14 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.job4j.cars.model.*;
-import ru.job4j.cars.service.CarService;
 import ru.job4j.cars.service.EngineService;
 import ru.job4j.cars.service.PostService;
 
 import javax.servlet.http.HttpSession;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static ru.job4j.cars.util.UserSession.getUser;
@@ -24,12 +21,11 @@ import static ru.job4j.cars.util.UserSession.getUser;
 public class PostController {
 
     private final PostService postService;
-    private final CarService carService;
+
     private final EngineService engineService;
 
-    public PostController(PostService postService, CarService carService, EngineService engineService) {
+    public PostController(PostService postService, EngineService engineService) {
         this.postService = postService;
-        this.carService = carService;
         this.engineService = engineService;
     }
 
@@ -57,27 +53,22 @@ public class PostController {
     public String createPost(@ModelAttribute("post") Post post, @RequestParam("brand") String brand,
                              @ModelAttribute("engineId") int engineId, @RequestParam("file") MultipartFile file,
                              @RequestParam("driverName") String driverName, @RequestParam("driverSurname") String driverSurname,
-                             HttpSession session) {
-        try {
-            var user = getUser(session);
-            var drive = new Driver(0, driverName, driverSurname, new ArrayList<>());
-            var car = new Car(0, brand, engineService.getById(engineId).get(), drive, new HashSet<>());
-            carService.add(car);
-            post.setCar(car);
-            post.setPhoto(file.getBytes());
-            post.setUser(user);
-            postService.create(post);
-        } catch (Exception e) {
-            log.error("Error in createPost.", e);
+                             HttpSession session, Model model) {
+        post.setUser(getUser(session));
+        var drive = Driver.builder().name(driverName).surname(driverSurname).build();
+        var car = Car.builder().name(brand).driver(drive).build();
+        if (!postService.create(post, car, file, engineId)) {
+            model.addAttribute("message", "Error when try create post.");
             return "redirect:/fail";
         }
         return "redirect:/all";
     }
 
-    @GetMapping("/{id}")
-    public String formPost(Model model, HttpSession session, @PathVariable("id") int id) {
+    @GetMapping("/post")
+    public String formPost(Model model, HttpSession session, @RequestParam("id") int id) {
         var post = postService.getById(id);
         if (post.isEmpty()) {
+            model.addAttribute("message", String.format("Not found post with this id = %s.", id));
             return "redirect:/fail";
         }
         model.addAttribute("post", postService.getById(id).get());
@@ -86,9 +77,10 @@ public class PostController {
     }
 
     @GetMapping("/delete/{postId}")
-    public String delete(@PathVariable("postId") int id) {
+    public String delete(@PathVariable("postId") int id, Model model) {
         var post = postService.getById(id);
         if (post.isEmpty()) {
+            model.addAttribute("message", String.format("Not found post with this id = %s.", id));
             return "redirect:/fail";
         }
         post.ifPresent(postService::deletePost);
@@ -101,10 +93,11 @@ public class PostController {
         return "redirect:/all";
     }
 
-    @GetMapping("/update/{postId}")
-    public String updatePost(HttpSession session, Model model, @PathVariable int postId) {
-        var post = postService.getById(postId);
+    @GetMapping("/update/{id}")
+    public String viewUpdate(HttpSession session, Model model, @PathVariable("id") int id) {
+        var post = postService.getById(id);
         if (post.isEmpty()) {
+            model.addAttribute("message", String.format("Not found post with this id = %s.", id));
             return "redirect:/fail";
         }
         model.addAttribute("user", getUser(session));
@@ -114,28 +107,20 @@ public class PostController {
     }
 
     @PostMapping("/updatePost")
-    public String updatePost(@ModelAttribute Post post, @ModelAttribute("engineId") int engineId,
-                             @RequestParam("file") MultipartFile file, @ModelAttribute Car car,
-                             @RequestParam(name = "car.name", required = false, defaultValue = "unknown") String brand,
-                             @RequestParam(name = "car.driver.name", required = false, defaultValue = "unknown") String drName,
-                             @RequestParam(name = "car.driver.surname", required = false, defaultValue = "unknown") String drSurname,
-                             @RequestParam(name = "car.id") int carId, @RequestParam(name = "car.driver.id") int drId,
-                             HttpSession session) {
-        try {
-            var user = getUser(session);
-            car.setName(brand);
-            var driver = Driver.builder().id(drId).name(drName).surname(drSurname).build();
-            car.setDriver(driver);
-            var engine = engineService.getById(engineId);
-            car.setEngine(engine.get());
-            car.setId(carId);
-            carService.update(car);
-            post.setCar(car);
-            post.setUser(user);
-            post.setPhoto(file.getBytes());
-            postService.update(post);
-        } catch (Exception e) {
-            log.error("Error in updatePost.", e);
+    public String update(@ModelAttribute Post post, @ModelAttribute("engineId") int engineId,
+                         @RequestParam("file") MultipartFile file, @ModelAttribute Car car,
+                         @RequestParam(name = "car.name", required = false, defaultValue = "unknown") String brand,
+                         @RequestParam(name = "car.driver.name", required = false, defaultValue = "unknown") String drName,
+                         @RequestParam(name = "car.driver.surname", required = false, defaultValue = "unknown") String drSurname,
+                         @RequestParam(name = "car.id") int carId, @RequestParam(name = "car.driver.id") int drId,
+                         HttpSession session, Model model) {
+        var driver = Driver.builder().id(drId).name(drName).surname(drSurname).build();
+        car.setId(carId);
+        car.setDriver(driver);
+        car.setName(brand);
+        post.setUser(getUser(session));
+        if (!postService.update(post, engineId, file, car)) {
+            model.addAttribute("message", "Error in updatePost.");
             return "redirect:/fail";
         }
         return "redirect:/all";
@@ -151,8 +136,7 @@ public class PostController {
     @GetMapping("/photos")
     public String getPostsWithPhoto(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        model.addAttribute("posts", postService.getAllWithPhoto().stream()
-                .filter(p -> p.getPhoto().length > 0).toList());
+        model.addAttribute("posts", postService.getPostsWithPhoto());
         return "post/all";
     }
 

@@ -99,7 +99,7 @@
                 <tr th:each="post: ${posts}">
                     <td>
                         <a th:text="${post.car.name}"
-                           th:href="@{|${post.getId()}|}"></a>
+                           th:href="@{|/post?id=${post.id}|}"></a>
                     </td>
 
                     <td>
