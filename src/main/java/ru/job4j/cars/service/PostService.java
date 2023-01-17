@@ -66,7 +66,7 @@ public class PostService {
 
     public boolean update(Post post, int engineId, MultipartFile file, Car car) {
         try {
-            post.setPhoto(file.getBytes());
+            post.setPhoto(nullifyIfPhotoIsEmpty(file.getBytes()));
             car.setEngine(engineRepository.getByIdEngine(engineId)
                     .orElseThrow(
                             () -> new NoSuchElementException(String.format("Not found engine this id = %s.", engineId))
@@ -88,12 +88,16 @@ public class PostService {
                     )));
             carRepository.createCar(car);
             post.setCar(car);
-            post.setPhoto(file.getBytes());
+            post.setPhoto(nullifyIfPhotoIsEmpty(file.getBytes()));
             postRepository.createPost(post);
         } catch (Exception e) {
             log.error("Error in createPost.", e);
             return false;
         }
         return true;
+    }
+
+    private byte[] nullifyIfPhotoIsEmpty(byte[] bytes) {
+        return bytes.length == 0 ? null : bytes;
     }
 }
