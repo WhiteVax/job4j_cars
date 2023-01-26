@@ -44,7 +44,7 @@ public class UserController {
     @GetMapping("/fail")
     public String failReg(Model model, HttpSession session) {
         model.addAttribute("user", getUser(session));
-        return "post/fail";
+        return "user/failReg";
     }
 
     @GetMapping("/successfully")

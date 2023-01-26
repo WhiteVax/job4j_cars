@@ -50,7 +50,8 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public String createPost(@ModelAttribute("post") Post post, @RequestParam("brand") String brand,
+    public String createPost(@ModelAttribute("post") Post post,
+                             @RequestParam(value = "brand", required = false, defaultValue = "unknown") String brand,
                              @ModelAttribute("engineId") int engineId, @RequestParam("file") MultipartFile file,
                              @RequestParam("driverName") String driverName, @RequestParam("driverSurname") String driverSurname,
                              HttpSession session, Model model) {

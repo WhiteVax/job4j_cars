@@ -18,7 +18,7 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <title>Cars</title>
+    <title>To Do</title>
 </head>
 <body>
 <div class="container">
@@ -31,13 +31,13 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" th:href="@{/all}">Все объявления<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/add}">Добавить обьявление</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" th:href="@{/registration}">Регистрация</a>
                 </li>
                 <li>
@@ -54,38 +54,13 @@
         </div>
     </nav>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-brown">
-        <a class="navbar-brand" href="#"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggle-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupported">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/all}">Все обьявления<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/last/}">За последние 24 часа</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/photos/}">С фото</a>
-                </li>
-            </ul>
-            <form th:action="@{|/brand/${carBrand}|}" class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" name="carBrand" type="search" placeholder="Марка автомобиля"
-                       aria-label="Поиск">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-        </div>
-    </nav>
-
-    <div class="row pt-3" style="text-align: center">
-
+    <div class="row pt-3">
         <div class="card" style="width: 100%">
-            <div class="card" style="width: 100%">
-                <h2 style="text-align: center" th:text="${message}">404</h2>
+            <div class="card-header">
+                Регистрация.
+            </div>
+            <div class="card-body">
+                <h2>Пользователь с таким логином уже существует.</h2>
             </div>
         </div>
     </div>
