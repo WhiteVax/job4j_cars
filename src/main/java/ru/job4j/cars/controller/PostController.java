@@ -58,8 +58,9 @@ public class PostController {
         var drive = Driver.builder().name(driverName).surname(driverSurname).build();
         var car = Car.builder().name(brand).driver(drive).build();
         if (!postService.create(post, car, file, engineId)) {
+            model.addAttribute("user", post.getUser());
             model.addAttribute("message", "Error when try create post.");
-            return "redirect:/fail";
+            return "post/fail";
         }
         return "redirect:/all";
     }
@@ -69,7 +70,7 @@ public class PostController {
         var post = postService.getById(id);
         if (post.isEmpty()) {
             model.addAttribute("message", String.format("Not found post with this id = %s.", id));
-            return "redirect:/fail";
+            return "post/fail";
         }
         model.addAttribute("post", postService.getById(id).get());
         model.addAttribute("user", getUser(session));
@@ -77,11 +78,12 @@ public class PostController {
     }
 
     @GetMapping("/delete/{postId}")
-    public String delete(@PathVariable("postId") int id, Model model) {
+    public String delete(@PathVariable("postId") int id, Model model, HttpSession session) {
         var post = postService.getById(id);
         if (post.isEmpty()) {
+            model.addAttribute("user", getUser(session));
             model.addAttribute("message", String.format("Not found post with this id = %s.", id));
-            return "redirect:/fail";
+            return "post/fail";
         }
         post.ifPresent(postService::deletePost);
         return "redirect:/all";
@@ -96,11 +98,11 @@ public class PostController {
     @GetMapping("/update/{id}")
     public String viewUpdate(HttpSession session, Model model, @PathVariable("id") int id) {
         var post = postService.getById(id);
+        model.addAttribute("user", getUser(session));
         if (post.isEmpty()) {
             model.addAttribute("message", String.format("Not found post with this id = %s.", id));
-            return "redirect:/fail";
+            return "post/fail";
         }
-        model.addAttribute("user", getUser(session));
         model.addAttribute("engines", engineService.getAll());
         model.addAttribute("post", post.get());
         return "post/update";
@@ -118,10 +120,12 @@ public class PostController {
         car.setId(carId);
         car.setDriver(driver);
         car.setName(brand);
+        var user = getUser(session);
+        model.addAttribute("user", user);
         post.setUser(getUser(session));
         if (!postService.update(post, engineId, file, car)) {
             model.addAttribute("message", "Error in updatePost.");
-            return "redirect:/fail";
+            return "post/fail";
         }
         return "redirect:/all";
     }
